@@ -1,0 +1,31 @@
+# MacOS system files
+.DS_Store
+
+# Ignore the local configuration file
+.env
+
+# Binaries for programs and plugins
+webapp
+*.exe
+*.out
+*.dll
+*.so
+*.dylib
+
+# Go specific
+/bin/
+/vendor/
+
+# Ignore Visual Studio Code settings
+.vscode/
+
+# Ignore logs
+/log/
+
+# Ignore binary build directories
+/build/
+
+# Ignore any binary files
+*.bak
+*.zip
+*.tar.gz
