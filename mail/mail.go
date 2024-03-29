@@ -30,13 +30,13 @@ func Send(email string, firstName string, token string) {
 		<html>
 			<body>
 				<h1>Hi %s,</h1>
-				<p style="font-size:20px;">Welcome to csye6225 ICU.</p>
+				<p style="font-size:20px;">Welcome to CSYE6225 ICU.</p>
 				<p style="font-size:20px;">Please click the link below to verify your email address to get started. </p>
 				<a href="%s" style="font-size:20px; background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
 					Verify Email Address
 				</a>
 				<p style="font-size:20px;">Thank you!</p>
-				<p style="font-size:20px;">The csye6225 ICU Team</p>
+				<p style="font-size:20px;">The CSYE6225 ICU Team</p>
 			</body>
 		</html>`, firstName, url)
 
