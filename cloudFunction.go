@@ -60,7 +60,7 @@ func verifyEmail(ctx context.Context, e event.Event) error {
     log.Printf("Error to unmarshal msg data: %v", err)
     return err
 	}
-	log.Panicf("Message data received from topic: %v", user)
+	log.Printf("Message data received from topic: %v", user)
 
 	email := user.Username
 	firstName := user.FirstName
