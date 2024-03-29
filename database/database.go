@@ -42,7 +42,6 @@ func Connect() {
 	log.Println("Connected to database")
 }
 
-
 func SaveTokenInfo(username string, token string, tokenCreated time.Time) error {
 	user := User{}
 	result := DB.Where("username = ?", username).First(&user)
