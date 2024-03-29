@@ -71,7 +71,7 @@ func verifyEmail(ctx context.Context, e event.Event) error {
 	log.Printf("Verification token %s generated at: %s", token, tokenCreated)
 
 	// Save token information to user in db
-	// TODO: database.SaveTokenInfo(email, token, tokenCreated)
+	database.Connect()
 	err = database.SaveTokenInfo(email, token, tokenCreated)
 	if err != nil {
 		log.Printf("Error saving token info to database: %v", err)
