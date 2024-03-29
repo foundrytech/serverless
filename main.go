@@ -96,7 +96,7 @@ func sendMail(email string, firstName string, token string) {
 
 	// Create an instance of the Mailgun Client
 	mg := mailgun.NewMailgun(domain, privateAPIKey)
-	
+
 	sender := os.Getenv("SENDER")
 	subject := os.Getenv("SUBJECT")
 	recipient := email
