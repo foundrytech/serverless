@@ -1,18 +1,18 @@
-package main
+package cloudfunction
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/google/uuid"
 
-	"github.com/mailgun/mailgun-go/v4"
+	"github.com/jicodes/serverless/database"
+	"github.com/jicodes/serverless/mail"
 )
 
 func init() {
@@ -60,75 +60,27 @@ func verifyEmail(ctx context.Context, e event.Event) error {
     log.Printf("Error to unmarshal msg data: %v", err)
     return err
 	}
+	log.Panicf("Message data received from topic: %v", user)
 
 	email := user.Username
 	firstName := user.FirstName
 
-	log.Printf("Email is: %s", email)
-	log.Printf("First Name is: %s", firstName)
-
-
-	// Generate verification token
-
-	token, tokenCreated := generateVerificationToken()
-	_ = tokenCreated
-	_ = token
-
-	// Update user data in db
-	// db.UpdateUserVerificationToken(email, token, tokenCreated)
-
-
-	// Send email to user
-	sendMail(email, firstName, token)
-
-	return nil
-}
-
-func generateVerificationToken() (string, time.Time) {
+	// Generate verification token information
 	token := uuid.New().String()
 	tokenCreated := time.Now()
-	return token, tokenCreated
-}
+	log.Printf("Verification token %s generated at: %s", token, tokenCreated)
 
-func sendMail(email string, firstName string, token string) {
-	domain := os.Getenv("DOMAIN_NAME")
-	privateAPIKey := os.Getenv("MAILGUN_PRIVATE_API_KEY")
-
-	// Create an instance of the Mailgun Client
-	mg := mailgun.NewMailgun(domain, privateAPIKey)
-
-	sender := os.Getenv("SENDER")
-	subject := os.Getenv("SUBJECT")
-	recipient := email
-
-	// The message object allows you to add attachments and Bcc recipients
-	message := mg.NewMessage(sender, subject, "", recipient)
-
-	url := fmt.Sprintf("http://%s:8080/v1/user/verify?token=%s", domain, token)
-
-	body :=fmt.Sprintf(`
-		<html>
-			<body>
-				<h1>Hi %s,</h1>
-				<p style="font-size:30px;">Welcome to csye6225 ICU.</p>
-				<p style="font-size:30px;">Please click the link below to verify your email address to get started. </p>
-				<a href="%s" style="background-color: black; color: white; padding: 5x; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border: none;">
-					Verify Email
-				</a>
-			</body>
-		</html>`, firstName, url)
-
-	message.SetHtml(body)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-
-	// Send the message with a 5 second timeout
-	resp, id, err := mg.Send(ctx, message)
-
+	// Save token information to user in db
+	// TODO: database.SaveTokenInfo(email, token, tokenCreated)
+	err = database.SaveTokenInfo(email, token, tokenCreated)
 	if err != nil {
-		fmt.Printf(`{"message": "Failed to send email: %s", "severity": "error"}`, err)
+		log.Printf("Error saving token info to database: %v", err)
+		return err
 	}
+	log.Printf("Token info saved to database")
 
-	fmt.Printf(`{"message": "Email sent with resp %s, ID %s", "severity": "info"}`, resp, id)
+	// Send email to user
+	mail.Send(email, firstName, token)
+
+	return nil
 }
