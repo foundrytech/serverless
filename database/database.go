@@ -53,13 +53,14 @@ func SaveTokenInfo(username string, token string, tokenCreated time.Time) error 
 	// Update the VerificationToken and VerificationTokenCreated fields
 	user.VerificationToken = &token
 	user.VerificationTokenCreated = &tokenCreated
+	user.AccountUpdated = tokenCreated
 
 	result = DB.Save(&user)
 	if result.Error != nil {
-		log.Printf("Error saving token info to database: %v", result.Error)
+		log.Printf("Error saving verification token info to database: %v", result.Error)
 		return result.Error
 	}
 
-	log.Printf("Token info saved to database: %v", user)
+	log.Println("Verification token info saved to database from cloud function")
 	return nil
 }
