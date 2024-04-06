@@ -24,7 +24,7 @@ func Send(email string, firstName string, token string) {
 	// The message object allows you to add attachments and Bcc recipients
 	message := mg.NewMessage(sender, subject, "", recipient)
 
-	url := fmt.Sprintf("http://%s:8080/v1/user/verify?token=%s", domain, token)
+	url := fmt.Sprintf("https://%s/v1/user/verify?token=%s", domain, token)
 
 	body :=fmt.Sprintf(`
 		<html>
